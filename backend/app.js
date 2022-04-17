@@ -25,34 +25,27 @@ const productSchema = mongoose.Schema({
 const Product = mongoose.model('Product', productSchema);
 
 
-app.get(`${api}/products`, (req, res) => {
-  const product = {
-    id: 1,
-    name: 'Product 1',
-    price: 100,
-    description: 'Product 1 description',
-    image: 'https://via.placeholder.com/150',
-  
-  };
+app.get(`${api}/products`, async (req, res) => {
+  const product = await Product.find();
+
+    if(!product){
+      res.status(500).json({success: false});
+    }
     res.send(product);
 })
 
 app.post(`${api}/products`, (req, res) => {
-  const newProduct = new Product({
-    name: req.body.name,
-    price: req.body.price,
-    quantity: req.body.quantity,
-    description: req.body.description,
-    image: req.body.image
+  const newProduct = new Product(req.body);
+  newProduct.save((err, product) => {
+    if (err) {
+      res.status(500).json({
+        error: err,
+        success: false
+   })
+  } else {
+      res.send(product);
+    }
   });
-  newProduct.save().then((createProduct => {
-    res.status(201).json(createProduct)
-  })).catch((err) => {
-    res.status(500).json({
-      error: err,
-      success: false
-    })
-  })
 })
 
 mongoose.connect(dbConnection,
