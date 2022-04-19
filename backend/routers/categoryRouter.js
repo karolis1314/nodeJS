@@ -11,9 +11,9 @@ const router = express.Router();
       res.send(category);
   })
   
-  router.post(`/`, (req, res) => {
+  router.post(`/`, async (req, res) => {
     const newCategory = new Category(req.body);
-    newCategory.save((err, category) => {
+    await newCategory.save((err, category) => {
       if (err) {
         res.status(500).json({
           error: err,

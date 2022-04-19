@@ -9,7 +9,13 @@ app.options('*', cors());
 
 //require
 require('dotenv/config');
+
+//Routers constants
 const productRouter = require('./routers/productRouter');
+const ordersRouter = require('./routers/ordersRouter');
+const orderItemRouter = require('./routers/orderItemRouter');
+const categoryRouter = require('./routers/categoryRouter');
+const userRouter = require('./routers/userRouter');
 
 // env variable
 const api = process.env.API_URL;
@@ -21,6 +27,10 @@ app.use(morgan('tiny'));
 
 //Routers
 app.use(`${api}/products`, productRouter);
+app.use(`${api}/orders`, ordersRouter);
+app.use(`${api}/orderItems`, orderItemRouter);
+app.use(`${api}/categories`, categoryRouter);
+app.use(`${api}/users`, userRouter);
 
 mongoose.connect(dbConnection,
 {

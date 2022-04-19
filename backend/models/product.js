@@ -26,7 +26,8 @@ const productSchema = mongoose.Schema({
     wireless: String,
     mobileConnectivity: String,
     compatibility: String,
-    termsAndConditions: String
+    termsAndConditions: String,
+    isFeatured: Boolean
 });
 
 

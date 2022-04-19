@@ -11,9 +11,9 @@ const router = express.Router();
       res.send(orderItem);
   })
   
-  router.post(`/`, (req, res) => {
+  router.post(`/`, async (req, res) => {
     const newOrderItem = new OrderItem(req.body);
-    newOrderItem.save((err, orderItem) => {
+    await newOrderItem.save((err, orderItem) => {
       if (err) {
         res.status(500).json({
           error: err,

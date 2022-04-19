@@ -12,9 +12,9 @@ const router = express.Router();
       res.send(order);
   })
   
-  router.post(`/`, (req, res) => {
+  router.post(`/`, async (req, res) => {
     const newOrder = new Order(req.body);
-    newOrder.save((err, order) => {
+    await newOrder.save((err, order) => {
       if (err) {
         res.status(500).json({
           error: err,

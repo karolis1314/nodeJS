@@ -11,9 +11,9 @@ const router = express.Router();
       res.send(user);
   })
   
-  router.post(`/`, (req, res) => {
+  router.post(`/`, async (req, res) => {
     const newUser = new User(req.body);
-    newUser.save((err, user) => {
+    await newUser.save((err, user) => {
       if (err) {
         res.status(500).json({
           error: err,
