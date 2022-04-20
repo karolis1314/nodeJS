@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
  router.get(`/`, async (req, res) => {
-    const user = await User.find();
+    const user = await User.find().select('-password');
 
       if(!user){
         res.status(404).json({success: false});
@@ -12,7 +12,7 @@ const router = express.Router();
   })
 
   router.get(`/:id`, async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select('-password');
     if(!user){
       res.status(404).json({success: false, error: 'User not found'});
     }
@@ -20,7 +20,7 @@ const router = express.Router();
   })
 
   router.put(`/:id`, async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true}).select('-password');
     if(!user){
       res.status(404).json({success: false, error: 'User not found'});
     }
@@ -28,7 +28,7 @@ const router = express.Router();
   })
 
   router.delete(`/:id`,  (req, res) => {
-    User.findByIdAndDelete(req.params.id).then(user => {
+    User.findByIdAndDelete(req.params.id).select('-password').then(user => {
       if(user){
         return res.status(200).json({
           success: true,
@@ -57,7 +57,10 @@ const router = express.Router();
           success: false
      })
     } else {
-        res.send(user);
+        res.status(200).json({
+          success: true,
+          user: ('User created successfully with id: ' + user._id)
+        })
       }
     });
   })
