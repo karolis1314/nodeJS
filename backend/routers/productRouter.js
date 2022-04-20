@@ -3,33 +3,51 @@ const express = require('express');
 const { Category } = require('../models/category');
 const router = express.Router();
 
- router.get(`/`, async (req, res) => {
-    const product = await Product.find();
-
+ router.get(`/`, (req, res) => {
+    Product.find().then(product => {
       if(!product){
         res.status(404).json({success: false});
       }
-      res.send(product);
+      res.status(200).send(product);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
-  router.get(`/:id`, async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if(!product){
-      res.status(404).json({success: false, error: 'Product not found'});
-    }
-    res.status(200).send(product);
+  router.get(`/:id`, (req, res) => {
+    Product.findById(req.params.id).then(product => {
+      if(!product){
+        res.status(404).json({success: false, error: 'Product not found'});
+      }
+      res.status(200).send(product);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
-  router.put(`/:id`, async (req, res) => { 
-    const category = await Category.findById(req.body.category);
+  router.put(`/:id`, (req, res) => { 
+    Category.findById(req.body.category).then(category => {
     if(!category){
       return res.status(400).send({success: false, error: 'Invalid Category'});
     }
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {new: true});
-    if(!product){
-      res.status(404).json({success: false, error: 'Product not found'});
-    }
-    res.status(200).send(product);
+  })
+    const product =Product.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(product => {
+      if(!product){
+        res.status(404).json({success: false, error: 'Product not found'});
+      }
+      res.status(200).send(product);
+    }).catch(err => {
+      return res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
   router.delete(`/:id`,  (req, res) => {

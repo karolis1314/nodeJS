@@ -2,23 +2,36 @@ const { Category } = require('../models/category');
 const express = require('express');
 const router = express.Router();
 
- router.get(`/`, async (req, res) => {
-    const category = await Category.find();
-
+ router.get(`/`,(req, res) => {
+    Category.find().then(category => {
       if(!category){
-        res.status(500).json({success: false});
+        res.status(404).json({success: false});
       }
       res.send(category);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
-  router.get(`/:id`, async (req, res) => {
-    const category = await Category.findById(req.params.id);
-    if(!category){
-      res.status(500).json({success: false, error: 'Category not found'});
+  router.get(`/:id`, (req, res) => {
+    Category.findById(req.params.id).then(category => {
+      if(!category){
+        res.status(404).json({success: false, error: 'Category not found'});
+      }
+      res.status(200).send(category);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
     }
-    res.status(200).send(category);
+  )
   })
   
+  //Only post needs async rest needs the id validation, so promises are the best.
   router.post(`/`, async (req, res) => {
     const newCategory = new Category(req.body);
     await newCategory.save((err, category) => {
@@ -27,18 +40,25 @@ const router = express.Router();
           error: err,
           success: false
      })
-    } else {
-        res.send(category);
+      }else{
+        res.status(200).send(category);
       }
-    });
+  })
   })
 
-  router.put(`/:id`, async (req, res) => {
-    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {new: true});
-    if(!category){
-      res.status(500).json({success: false, error: 'Category not found'});
-    }
-    res.status(200).send(category);
+  router.put(`/:id`, (req, res) => {
+    Category.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    .then(category => {
+      if(!category){
+        res.status(404).json({success: false, error: 'Category not found'});
+      }
+      res.status(200).send(category);
+    }).catch(err => {
+    res.status(500).json({
+      error: err,
+      success: false
+    })  
+  })
   })
 
   router.delete(`/:id`,  (req, res) => {

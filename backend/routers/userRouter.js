@@ -2,29 +2,46 @@ const { User } = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
- router.get(`/`, async (req, res) => {
-    const user = await User.find().select('-password');
-
+ router.get(`/`, (req, res) => {
+    User.find().select('-password').then(user => {
       if(!user){
         res.status(404).json({success: false});
       }
-      res.send(user);
+      res.status(200).send(user);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
-  router.get(`/:id`, async (req, res) => {
-    const user = await User.findById(req.params.id).select('-password');
-    if(!user){
-      res.status(404).json({success: false, error: 'User not found'});
-    }
-    res.status(200).send(user);
+  router.get(`/:id`, (req, res) => {
+    User.findById(req.params.id).select('-password').then(user => {
+      if(!user){
+        res.status(404).json({success: false, error: 'User not found'});
+      }
+      res.status(200).send(user);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
-  router.put(`/:id`, async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true}).select('-password');
-    if(!user){
-      res.status(404).json({success: false, error: 'User not found'});
-    }
-    res.status(200).send(user);
+  router.put(`/:id`, (req, res) => {
+    User.findByIdAndUpdate(req.params.id, req.body, {new: true}).select('-password').then(user => {
+      if(!user){
+        res.status(404).json({success: false, error: 'User not found'});
+      }
+      res.status(200).send(user);
+    }).catch(err => {
+      res.status(500).json({
+        error: err,
+        success: false
+      })
+    })
   })
 
   router.delete(`/:id`,  (req, res) => {
