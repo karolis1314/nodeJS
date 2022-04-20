@@ -20,6 +20,10 @@ const router = express.Router();
   })
 
   router.put(`/:id`, async (req, res) => {
+    const product = await Product.findById(req.body.product);
+    if(!product){
+      return res.status(400).send({success: false, error: 'Invalid Product'});
+    }
     const orderItem = await OrderItem.findByIdAndUpdate(req.params.id, req.body, {new: true});
     if(!orderItem){
       res.status(404).json({success: false, error: 'OrderItem not found'});

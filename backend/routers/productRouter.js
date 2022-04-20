@@ -21,6 +21,10 @@ const router = express.Router();
   })
 
   router.put(`/:id`, async (req, res) => { 
+    const category = await Category.findById(req.body.category);
+    if(!category){
+      return res.status(400).send({success: false, error: 'Invalid Category'});
+    }
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {new: true});
     if(!product){
       res.status(404).json({success: false, error: 'Product not found'});

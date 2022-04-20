@@ -21,6 +21,14 @@ const router = express.Router();
   })
 
   router.put(`/:id`, async (req, res) => {
+    const user = await User.findById(req.body.user);
+    const orderItem = await OrderItem.findById(req.body.orderItem);
+    if(!user){
+      return res.status(400).send({success: false, error: 'Invalid User'});
+    }
+    if(!orderItem){
+      return res.status(400).send({success: false, error: 'Invalid OrderItem'});
+    }
     const order = await Order.findByIdAndUpdate(req.params.id, req.body, {new: true});
     if(!order){
       res.status(404).json({success: false, error: 'Order not found'});
