@@ -1,5 +1,6 @@
 const { Product } = require('../models/product');
 const express = require('express');
+const { Category } = require('../models/category');
 const router = express.Router();
 
  router.get(`/`, async (req, res) => {
@@ -49,6 +50,10 @@ const router = express.Router();
 })
   
   router.post(`/`, async (req, res) => {
+    const category = await Category.findById(req.body.category);
+    if(!category){
+      return res.status(400).send({success: false, error: 'Invalid Category'});
+    }
     const newProduct = new Product(req.body);
     await newProduct.save((err, product) => {
       if (err) {

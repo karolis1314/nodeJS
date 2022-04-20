@@ -49,6 +49,10 @@ const router = express.Router();
 })
   
   router.post(`/`, async (req, res) => {
+    const product = await Product.findById(req.body.product);
+    if(!product){
+      return res.status(400).send({success: false, error: 'Invalid Product'});
+    }
     const newOrderItem = new OrderItem(req.body);
     await newOrderItem.save((err, orderItem) => {
       if (err) {

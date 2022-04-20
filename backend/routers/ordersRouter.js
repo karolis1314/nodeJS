@@ -50,6 +50,14 @@ const router = express.Router();
 })
   
   router.post(`/`, async (req, res) => {
+    const user = await User.findById(req.body.user);
+    const orderItem = await OrderItem.findById(req.body.orderItem);
+    if(!user){
+      return res.status(400).send({success: false, error: 'Invalid User'});
+    }
+    if(!orderItem){
+      return res.status(400).send({success: false, error: 'Invalid OrderItem'});
+    }
     const newOrder = new Order(req.body);
     await newOrder.save((err, order) => {
       if (err) {
