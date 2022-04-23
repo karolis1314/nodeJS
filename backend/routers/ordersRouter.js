@@ -1,6 +1,9 @@
 const { Order } = require('../models/order');
+const { User } = require('../models/user');
+const { OrderItem } = require('../models/orderItem');
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 
  router.get(`/`, (req, res) => {
@@ -31,7 +34,7 @@ const router = express.Router();
     })
   })
 
-  router.put(`/:id`,(req, res) => {
+  router.put(`/:id`, async (req, res) => {
     User.findById(req.body.user).then(user => {
       if(!user){
         return res.status(400).send({success: false, error: 'Invalid User'});
@@ -41,16 +44,20 @@ const router = express.Router();
           success: false
         })
       })
-    OrderItem.findById(req.body.orderItem).then(orderItem => {
-    if(!orderItem){
-      return res.status(400).send({success: false, error: 'Invalid OrderItem'});
+      let answer = false;
+      req.body.orderItems.forEach(element => {
+        if(!mongoose.isValidObjectId(element)){
+          answer = true;
+       }
+      });
+      if(answer){
+        return res.status(400).send({ error: 'Invalid Order Items'});
+      }
+    const orderItems = [await OrderItem.findById(req.body.orderItems)];
+    if(!orderItems){
+      return res.status(400).send({success: false, error: 'Invalid Order Item'});
     }
-    }).catch(err => {
-    return res.status(500).send({
-      error: err,
-      success: false
-    })
-  })
+    req.body.totalPrice = await getTotal(req.body.orderItems);
     Order.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(order => {
       if(!order){
         res.status(404).json({success: false, error: 'Order not found'});
@@ -87,18 +94,19 @@ const router = express.Router();
   
   router.post(`/`, async (req, res) => {
     const user = await User.findById(req.body.user);
-    const orderItem = await OrderItem.findById(req.body.orderItem);
+    const orderItem = [await OrderItem.findById(req.body.orderItems)];
     if(!user){
       return res.status(400).send({success: false, error: 'Invalid User'});
     }
-    if(!orderItem){
-      return res.status(400).send({success: false, error: 'Invalid OrderItem'});
-    }
-    const newOrder = new Order(req.body);
-    await newOrder.save((err, order) => {
+      if(!orderItem){
+        return res.status(400).send({success: false, error: 'Invalid OrderItem'});
+      }
+     const newOrder = new Order(req.body);
+     newOrder.totalPrice = await getTotal(newOrder.orderItems);
+     await newOrder.save((err, order) => {
       if (err) {
         res.status(404).json({
-          error: err,
+          error: "Error Passing the Order",
           success: false
      })
     } else {
@@ -106,5 +114,14 @@ const router = express.Router();
       }
     });
   })
+
+   async function getTotal(orderItems) {
+    let total = 0;
+    for (let i = 0; i < orderItems.length; i++) {
+      const orderItem = await OrderItem.findById(orderItems[i]);
+      total += orderItem.price * orderItem.quantity;
+    }
+    return total;
+  }
 
   module.exports = router;

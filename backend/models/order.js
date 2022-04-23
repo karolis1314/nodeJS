@@ -3,7 +3,7 @@ const { OrderItem } = require('./orderItem');
 
 
 const ordersSchema = mongoose.Schema({
-    orderItems: { type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' },
+    orderItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }],
     shippingAddress1: String,
     shippingAddress2: String,
     shippingCity: String,

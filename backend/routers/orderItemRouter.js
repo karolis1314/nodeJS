@@ -1,4 +1,5 @@
 const { OrderItem } = require('../models/orderItem');
+const {Product} = require('../models/product');
 const express = require('express');
 const router = express.Router();
 
@@ -38,8 +39,11 @@ const router = express.Router();
     OrderItem.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(orderItem => {
       if(!orderItem){
         res.status(404).json({success: false, error: 'OrderItem not found'});
+      } else{
+        orderItem.price = product.price;
+        orderItem.save();
+         res.status(200).send(orderItem);
       }
-      res.status(200).send(orderItem);
     }).catch(err => {
       return res.status(500).json({
         error: err,
@@ -83,6 +87,8 @@ const router = express.Router();
           success: false
      })
     } else {
+        orderItem.price = product.price;
+        orderItem.save();
         res.send(orderItem);
       }
     });
