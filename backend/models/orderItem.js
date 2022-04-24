@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Product } = require('./product');
 
+//Add here from products price with populate.
 const orderItemSchema = mongoose.Schema({
     product: 
     { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },

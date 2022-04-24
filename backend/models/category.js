@@ -1,9 +1,18 @@
 const mongoose = require('mongoose');
 
 const categorySchema = mongoose.Schema({
-    name: String,
-    icon: String,
-    color: String
+    name: {
+        type: String,
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true
+    },
+    color: {
+        type: String,
+        required: true
+    }
 });
 
 categorySchema.virtual('id').get(function () {
