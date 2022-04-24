@@ -15,4 +15,12 @@ const ordersSchema = mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
+ordersSchema.virtual('id').get(function () {
+    return this._id.toHexString();
+});
+
+ordersSchema.set('toJSON', {
+    virtuals: true
+});
+
 exports.Order = mongoose.model('Order', ordersSchema);

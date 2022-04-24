@@ -4,7 +4,11 @@ const { Category } = require('../models/category');
 const router = express.Router();
 
  router.get(`/`, (req, res) => {
-    Product.find().then(product => {
+   let filter = {};
+    if (req.query.categories) {
+      filter = {category : req.query.categories.split(',')};
+    }
+    Product.find(filter).populate('category').then(product => {
       if(!product){
         res.status(404).json({success: false});
       }
@@ -18,7 +22,7 @@ const router = express.Router();
   })
 
   router.get(`/:id`, (req, res) => {
-    Product.findById(req.params.id).then(product => {
+    Product.findById(req.params.id).populate('category').then(product => {
       if(!product){
         res.status(404).json({success: false, error: 'Product not found'});
       }
@@ -37,7 +41,7 @@ const router = express.Router();
       return res.status(400).send({success: false, error: 'Invalid Category'});
     }
   })
-    const product =Product.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(product => {
+    Product.findByIdAndUpdate(req.params.id, req.body, {new: true}).then(product => {
       if(!product){
         res.status(404).json({success: false, error: 'Product not found'});
       }
