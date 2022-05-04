@@ -3,6 +3,8 @@ const app = express();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const authJwt = require('./helper/jwt');
+const errorHandler = require('./helper/errorHandler');
 
 app.use(cors());
 app.options('*', cors());
@@ -17,6 +19,7 @@ const orderItemRouter = require('./routers/orderItemRouter');
 const categoryRouter = require('./routers/categoryRouter');
 const userRouter = require('./routers/userRouter');
 
+
 // env variable
 const api = process.env.API_URL;
 const dbConnection = process.env.CONNECTION_TO_THE_DB;
@@ -24,6 +27,8 @@ const dbConnection = process.env.CONNECTION_TO_THE_DB;
 //Middelware for this app
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(authJwt());
+app.use(errorHandler);
 
 //Routers
 app.use(`${api}/products`, productRouter);
