@@ -35,6 +35,16 @@ const router = express.Router();
     })
   })
 
+  router.get(`/get/features`, async (req, res) => {
+    const products = await Product.find({isFeatured: true}).populate('category');
+    if(!products){
+      res.status(404).json({error: 'No feautured products found'});
+    }
+    res.status(200).send(products);
+  })
+
+
+
   router.put(`/:id`, (req, res) => { 
     Category.findById(req.body.category).then(category => {
     if(!category){

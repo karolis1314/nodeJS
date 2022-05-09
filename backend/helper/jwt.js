@@ -8,9 +8,10 @@ function authJwt(){
         algorithms: ['HS256']
     }).unless({
         path: [
-            {url: `${api}/products`, methods: ['GET']},
+            {url: /\/api\/v1\/products(.*)/, methods: ['GET']},
             `${api}/users/login`,
-            `${api}/users/register`
+            `${api}/users/register`,
+            {url: /\/api\/v1\/categories(.*)/, methods: ['GET']}
         ]
     });
 }
