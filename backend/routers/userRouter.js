@@ -110,7 +110,12 @@ const router = express.Router();
           error: 'Invalid password'
         })
       }
-      const token = jsonwebtoken.sign({userId: user.id}, secret, {expiresIn: '1h'});
+      const token = jsonwebtoken.sign(
+        {
+          userId: user.id,
+          isAdmin: user.isAdmin
+        }, 
+        secret, {expiresIn: '1h'});
       res.status(200).json({
         success: true,
         message: 'User logged in successfully',
