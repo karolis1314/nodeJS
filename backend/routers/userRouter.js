@@ -32,6 +32,15 @@ const router = express.Router();
     })
   })
 
+    //Get total users.
+    router.get(`/get/count`, async (req, res) => {
+      const userCount = await User.countDocuments();
+      if(!userCount){
+        res.status(404).json({error: 'No Userts found'});
+      }
+      res.status(200).send({userCount: userCount});
+    })
+
   router.put(`/:id`, (req, res) => {
     User.findByIdAndUpdate(req.params.id, req.body, {new: true}).select('-password').then(user => {
       if(!user){

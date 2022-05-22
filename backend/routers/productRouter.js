@@ -43,7 +43,14 @@ const router = express.Router();
     res.status(200).send(products);
   })
 
-
+  //Get total count of products.
+  router.get(`/get/count`, async (req, res) => {
+    const productCount = await Product.countDocuments();
+    if(!productCount){
+      res.status(404).json({error: 'No products found'});
+    }
+    res.status(200).send({productCount: productCount});
+  })
 
   router.put(`/:id`, (req, res) => { 
     Category.findById(req.body.category).then(category => {
